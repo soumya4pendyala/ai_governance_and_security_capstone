@@ -1,0 +1,12 @@
+langchain
+langchain-community
+langchain-openai
+langchain-groq
+python-dotenv
+langchain-google-genai
+mcp
+fastmcp
+ipykernel
+nest_asyncio
+nbformat
+nbclient

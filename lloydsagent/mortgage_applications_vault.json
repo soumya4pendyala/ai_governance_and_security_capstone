@@ -1,0 +1,228 @@
+[
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "documents_analyzed": [
+        "payslips",
+        "bank_statements"
+      ],
+      "ocr_confidence": 0.985,
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-06T06:55:58.443276+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-0443594",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-04",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3280,000.00 under reference DIP-LLOYDS-0443594."
+    },
+    "application_id": "APP-640823",
+    "stored_at": "2026-11-06T06:55:58.443925+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "VP Medical Director",
+      "employment_length_years": 6.0,
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "notes": "Verified executive remuneration statements match account credits.",
+      "documents_analyzed": [
+        "payslips",
+        "bank_statements"
+      ],
+      "ocr_confidence": 0.985,
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Lloyds Premier",
+      "savings_balance": 150000.0,
+      "tenure_years": 10
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-992134",
+      "score": 860,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "deposit_pct": 23.53,
+      "loan_to_income_ratio": 4.06,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "monthly_debt_commitments_gbp": 450.0,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "evaluated_at": "2026-11-06T06:55:58.467240+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan amount \u00a3650,000.00 exceeds AI automated authority limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for loans exceeding \u00a3500,000."
+    },
+    "application_id": "APP-131780",
+    "stored_at": "2026-11-06T06:55:58.467729+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Robert Taylor",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 150000.0,
+    "property_valuation_gbp": 200000.0,
+    "verified_employment": {
+      "employer_name": "Apex Gig Logistics",
+      "employment_type": "Zero Hours Contractor",
+      "job_title": "Courier",
+      "employment_length_years": 0.8,
+      "gross_annual_income_gbp": 32000.0,
+      "net_monthly_pay_gbp": 2200.0,
+      "tax_code": "BR",
+      "payslips_verified": false,
+      "bank_statements_cross_verified": false,
+      "notes": "Inconsistent payslips and contractor gaps.",
+      "documents_analyzed": [
+        "payslips",
+        "bank_statements"
+      ],
+      "ocr_confidence": 0.985,
+      "verification_status": "FAILED_VERIFICATION"
+    },
+    "lloyds_account_summary": {
+      "tier": "Classic Account",
+      "savings_balance": 5000.0,
+      "tenure_years": 2
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-331092",
+      "score": 540,
+      "score_band": "Poor",
+      "risk_category": "Non-Standard - High Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 150000.0,
+      "property_valuation_gbp": 200000.0,
+      "deposit_amount_gbp": 50000.0,
+      "deposit_pct": 25.0,
+      "loan_to_income_ratio": 4.69,
+      "lti_cap": 4.5,
+      "lti_passed": false,
+      "loan_to_value_pct": 75.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 833.75,
+      "stressed_monthly_payment_7_5pct_gbp": 1108.49,
+      "monthly_debt_commitments_gbp": 600.0,
+      "surplus_under_stress_gbp": -984.49,
+      "stress_test_passed": false,
+      "overall_affordability_passed": false,
+      "max_recommended_loan_gbp": 144000.0
+    },
+    "decision": {
+      "applicant_name": "Robert Taylor",
+      "requested_loan_amount_gbp": 150000.0,
+      "evaluated_at": "2026-11-06T06:55:58.498183+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Credit Risk Underwriter",
+      "escalation_reasons": [
+        "Adverse credit or sub-prime score: Score=540 (min standard 700), Adverse flags=3."
+      ],
+      "action_required": "Full manual underwrite and risk mitigation assessment required."
+    },
+    "application_id": "APP-331733",
+    "stored_at": "2026-11-06T06:55:58.498767+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  }
+]
