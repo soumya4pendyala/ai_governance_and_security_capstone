@@ -410,5 +410,467 @@
       "FCA_MCOB",
       "AI_GOVERNANCE_AUDITED"
     ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "payslips_verified": true,
+      "issuer_domain": "payroll.fintechsystems.co.uk",
+      "provenance_hash": "aa4d80fbecf0e41bf486b36812599d77b1a703d2f51654ae582199eae718f136",
+      "notes": "Verified 3 months payslips match Lloyds account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "John Smith",
+      "national_insurance_number": "QQ123456C",
+      "credit_score": 825,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 2,
+      "credit_utilization_pct": 12.5,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 4,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-889104",
+      "queried_name": "John Smith",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-6168834",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-08",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant"
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-873578",
+    "stored_at": "2026-11-10T06:39:17.093098+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "payslips_verified": true,
+      "issuer_domain": "payroll.biohealth.com",
+      "provenance_hash": "fee7ca2b4612e22541a90b98605cc64861fa27e1c80fda69b811b07a46725915",
+      "notes": "Verified executive remuneration matches account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "Sarah Jenkins",
+      "national_insurance_number": "AB987654D",
+      "credit_score": 860,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 3,
+      "credit_utilization_pct": 14.0,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 6,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-992134",
+      "queried_name": "Sarah Jenkins",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "loan_to_income_ratio": 4.06,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan \u00a3650,000.00 exceeds AI automated limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for high-exposure loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-273309",
+    "stored_at": "2026-11-10T06:39:17.107159+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "payslips_verified": true,
+      "issuer_domain": "payroll.fintechsystems.co.uk",
+      "provenance_hash": "aa4d80fbecf0e41bf486b36812599d77b1a703d2f51654ae582199eae718f136",
+      "notes": "Verified 3 months payslips match Lloyds account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "John Smith",
+      "national_insurance_number": "QQ123456C",
+      "credit_score": 825,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 2,
+      "credit_utilization_pct": 12.5,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 4,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-889104",
+      "queried_name": "John Smith",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-1986098",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-08",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant"
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-007021",
+    "stored_at": "2026-11-10T06:40:02.174604+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "payslips_verified": true,
+      "issuer_domain": "payroll.biohealth.com",
+      "provenance_hash": "fee7ca2b4612e22541a90b98605cc64861fa27e1c80fda69b811b07a46725915",
+      "notes": "Verified executive remuneration matches account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "Sarah Jenkins",
+      "national_insurance_number": "AB987654D",
+      "credit_score": 860,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 3,
+      "credit_utilization_pct": 14.0,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 6,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-992134",
+      "queried_name": "Sarah Jenkins",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "loan_to_income_ratio": 4.06,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan \u00a3650,000.00 exceeds AI automated limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for high-exposure loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-848027",
+    "stored_at": "2026-11-10T06:40:02.197950+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "payslips_verified": true,
+      "issuer_domain": "payroll.fintechsystems.co.uk",
+      "provenance_hash": "aa4d80fbecf0e41bf486b36812599d77b1a703d2f51654ae582199eae718f136",
+      "notes": "Verified 3 months payslips match Lloyds account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "John Smith",
+      "national_insurance_number": "QQ123456C",
+      "credit_score": 825,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 2,
+      "credit_utilization_pct": 12.5,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 4,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-889104",
+      "queried_name": "John Smith",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-5565231",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-08",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant"
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-748308",
+    "stored_at": "2026-11-10T06:41:09.962343+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "payslips_verified": true,
+      "issuer_domain": "payroll.biohealth.com",
+      "provenance_hash": "fee7ca2b4612e22541a90b98605cc64861fa27e1c80fda69b811b07a46725915",
+      "notes": "Verified executive remuneration matches account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "Sarah Jenkins",
+      "national_insurance_number": "AB987654D",
+      "credit_score": 860,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 3,
+      "credit_utilization_pct": 14.0,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 6,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-992134",
+      "queried_name": "Sarah Jenkins",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "loan_to_income_ratio": 4.06,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan \u00a3650,000.00 exceeds AI automated limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for high-exposure loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-318902",
+    "stored_at": "2026-11-10T06:41:09.976361+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
   }
 ]
