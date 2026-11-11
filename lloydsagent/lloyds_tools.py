@@ -6,17 +6,264 @@ decision authority enforcement, storage persistence, and the MCP client integrat
 for Lloyds Bank's Keystone Mortgage Agent.
 """
 
+import base64
+import binascii
+import math
 import os
 import json
-import asyncio
+import ssl
+import tempfile
+import uuid
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
 from typing import Dict, Any, List, Optional
+from urllib.parse import urlsplit
+from cryptography.exceptions import InvalidTag
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from langchain_core.tools import tool
-from fastmcp import Client
-from lloydsagent.cra_mcp_server import cra_mcp
+from pydantic import BaseModel, ConfigDict, Field
+from lloydsagent.privacy import PIISanitizationMiddleware
+from typing import Literal
 
 # Path for persistent application storage
-VAULT_STORAGE_FILE = os.path.join(os.path.dirname(__file__), "mortgage_applications_vault.json")
+VAULT_STORAGE_DIR = os.getenv("KEYSTONE_VAULT_DIR", os.path.dirname(__file__))
+VAULT_STORAGE_FILE = os.path.join(VAULT_STORAGE_DIR, "mortgage_applications_vault.json")
+VAULT_ENVELOPE_FORMAT = "keystone-encrypted-vault"
+VAULT_ASSOCIATED_DATA = b"keystone-mortgage-vault:v1"
+FIELD_ENVELOPE_MARKER = "__keystone_field_ciphertext_v1__"
+SENSITIVE_FIELD_NAMES = {
+    "national_insurance_number",
+    "account_number",
+    "sort_code",
+    "credit_score",
+    "score",
+    "score_band",
+    "ccj_count",
+    "defaults_count",
+    "bankruptcies",
+    "risk_category",
+    "bureau_ref",
+    "bureau_reference",
+}
+MOCK_VAULT_ROLE_PERMISSIONS = {
+    "mortgage_underwriter": "read_application",
+    "privacy_officer": "read_application",
+    "audit_reader": "read_metadata",
+}
+HUMAN_MANDATE_ESCALATION_THRESHOLD_GBP = 500000.0
+MIN_STANDARD_CREDIT_SCORE = 700
+
+
+class MortgageDecisionOutput(BaseModel):
+    """Strict allow-list for decision-tool output; auto-approval is not a valid state."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    requested_loan_amount_gbp: float = Field(gt=0, strict=False)
+    evaluated_at: str = Field(min_length=1)
+    human_mandate_escalation_threshold_gbp: float = Field(
+        default=HUMAN_MANDATE_ESCALATION_THRESHOLD_GBP,
+        le=HUMAN_MANDATE_ESCALATION_THRESHOLD_GBP,
+        strict=False,
+    )
+    outcome: Literal["ESCALATE_TO_HUMAN_UNDERWRITER", "PENDING_HUMAN_REVIEW"]
+    dip_status: Literal["REFERRED", "PENDING_REVIEW"]
+    escalation_tier: str = Field(min_length=1)
+    escalation_reasons: list[str] = Field(min_length=1)
+    action_required: str = Field(min_length=1)
+
+
+def _validated_decision_json(decision: Dict[str, Any]) -> str:
+    validated = MortgageDecisionOutput.model_validate(decision)
+    return json.dumps(validated.model_dump(), indent=2)
+
+
+def _vault_cipher() -> AESGCM:
+    encoded_key = os.getenv("MORTGAGE_VAULT_KEY", "")
+    key_file = os.getenv("MORTGAGE_VAULT_KEY_FILE")
+    if encoded_key and key_file:
+        raise RuntimeError("Configure only one of MORTGAGE_VAULT_KEY or MORTGAGE_VAULT_KEY_FILE.")
+    if key_file:
+        try:
+            with open(key_file, "r", encoding="ascii") as key_handle:
+                encoded_key = key_handle.read().strip()
+        except (OSError, UnicodeError) as exc:
+            raise RuntimeError("Unable to read MORTGAGE_VAULT_KEY_FILE.") from exc
+    if not encoded_key:
+        raise RuntimeError(
+            "MORTGAGE_VAULT_KEY is required, or MORTGAGE_VAULT_KEY_FILE must point to its protected file."
+        )
+    try:
+        key = base64.b64decode(encoded_key.encode("ascii"), altchars=b"-_", validate=True)
+    except (UnicodeEncodeError, binascii.Error) as exc:
+        raise RuntimeError("MORTGAGE_VAULT_KEY must be URL-safe base64.") from exc
+    if len(key) != 32:
+        raise RuntimeError("MORTGAGE_VAULT_KEY must decode to exactly 32 bytes.")
+    return AESGCM(key)
+
+
+def _load_vault_records(cipher: AESGCM) -> List[Dict[str, Any]]:
+    if not os.path.exists(VAULT_STORAGE_FILE):
+        return []
+
+    with open(VAULT_STORAGE_FILE, "r", encoding="utf-8") as vault_file:
+        stored_data = json.load(vault_file)
+
+    if isinstance(stored_data, dict) and stored_data.get("format") == VAULT_ENVELOPE_FORMAT:
+        if stored_data.get("version") != 1 or stored_data.get("algorithm") != "AES-256-GCM":
+            raise ValueError("Unsupported encrypted mortgage vault format.")
+        nonce = base64.b64decode(stored_data["nonce"], validate=True)
+        ciphertext = base64.b64decode(stored_data["ciphertext"], validate=True)
+        try:
+            plaintext = cipher.decrypt(nonce, ciphertext, VAULT_ASSOCIATED_DATA)
+        except InvalidTag as exc:
+            raise RuntimeError(
+                "Mortgage vault authentication failed; data was not read or overwritten."
+            ) from exc
+        records = _reveal_sensitive_fields(
+            json.loads(plaintext.decode("utf-8")),
+            cipher,
+        )
+    else:
+        # Existing JSON vaults are migrated to an encrypted envelope on the next write.
+        records = stored_data
+
+    if not isinstance(records, list) or any(not isinstance(record, dict) for record in records):
+        raise ValueError("Mortgage vault must contain a list of application records.")
+    return records
+
+
+def _write_vault_records(records: List[Dict[str, Any]], cipher: AESGCM) -> None:
+    nonce = os.urandom(12)
+    protected_records = _protect_sensitive_fields(records, cipher)
+    plaintext = json.dumps(protected_records, indent=2).encode("utf-8")
+    envelope = {
+        "format": VAULT_ENVELOPE_FORMAT,
+        "version": 1,
+        "algorithm": "AES-256-GCM",
+        "nonce": base64.b64encode(nonce).decode("ascii"),
+        "ciphertext": base64.b64encode(
+            cipher.encrypt(nonce, plaintext, VAULT_ASSOCIATED_DATA)
+        ).decode("ascii"),
+    }
+
+    vault_directory = os.path.dirname(VAULT_STORAGE_FILE)
+    descriptor, temporary_path = tempfile.mkstemp(
+        prefix=".mortgage-vault-", suffix=".tmp", dir=vault_directory
+    )
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as vault_file:
+            json.dump(envelope, vault_file, indent=2)
+            vault_file.flush()
+            os.fsync(vault_file.fileno())
+        os.replace(temporary_path, VAULT_STORAGE_FILE)
+        if os.name != "nt":
+            os.chmod(VAULT_STORAGE_FILE, 0o600)
+    finally:
+        if os.path.exists(temporary_path):
+            os.unlink(temporary_path)
+
+
+def _project_fields(data: Dict[str, Any], allowed_fields: tuple[str, ...]) -> Dict[str, Any]:
+    return {field: data[field] for field in allowed_fields if field in data}
+
+
+def _is_finite_number(value: Any) -> bool:
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+    )
+
+
+def _protect_sensitive_fields(value: Any, cipher: AESGCM, path: str = "$") -> Any:
+    if isinstance(value, dict):
+        protected = {}
+        for key, item in value.items():
+            field_path = f"{path}.{key}"
+            is_sensitive_context = (
+                ".lloyds_account_summary." in field_path
+                or ".cra_credit_bureau." in field_path
+            )
+            if (
+                key.lower() in SENSITIVE_FIELD_NAMES or is_sensitive_context
+            ) and item is not None:
+                nonce = os.urandom(12)
+                plaintext = json.dumps(item, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+                ciphertext = cipher.encrypt(nonce, plaintext, field_path.encode("utf-8"))
+                protected[key] = {
+                    FIELD_ENVELOPE_MARKER: True,
+                    "nonce": base64.b64encode(nonce).decode("ascii"),
+                    "ciphertext": base64.b64encode(ciphertext).decode("ascii"),
+                }
+            else:
+                protected[key] = _protect_sensitive_fields(item, cipher, field_path)
+        return protected
+    if isinstance(value, list):
+        return [
+            _protect_sensitive_fields(item, cipher, f"{path}[{index}]")
+            for index, item in enumerate(value)
+        ]
+    return value
+
+
+def _reveal_sensitive_fields(value: Any, cipher: AESGCM, path: str = "$") -> Any:
+    if isinstance(value, dict):
+        revealed = {}
+        for key, item in value.items():
+            field_path = f"{path}.{key}"
+            if isinstance(item, dict) and item.get(FIELD_ENVELOPE_MARKER) is True:
+                nonce = base64.b64decode(item["nonce"], validate=True)
+                ciphertext = base64.b64decode(item["ciphertext"], validate=True)
+                plaintext = cipher.decrypt(nonce, ciphertext, field_path.encode("utf-8"))
+                revealed[key] = json.loads(plaintext.decode("utf-8"))
+            else:
+                revealed[key] = _reveal_sensitive_fields(item, cipher, field_path)
+        return revealed
+    if isinstance(value, list):
+        return [
+            _reveal_sensitive_fields(item, cipher, f"{path}[{index}]")
+            for index, item in enumerate(value)
+        ]
+    return value
+
+
+@dataclass(frozen=True)
+class MockVaultPrincipal:
+    """Demo-only identity context; production must construct this from verified claims."""
+
+    subject: str
+    tenant_id: str
+    role: str
+
+
+def read_mortgage_application_for_principal(
+    application_id: str,
+    principal: MockVaultPrincipal,
+) -> Dict[str, Any]:
+    """Demonstrate tenant row filtering and role-based reads over the mock vault."""
+    if not isinstance(principal, MockVaultPrincipal) or not principal.subject.strip():
+        raise PermissionError("An authenticated vault principal is required.")
+    permission = MOCK_VAULT_ROLE_PERMISSIONS.get(principal.role)
+    if permission is None:
+        raise PermissionError("The vault role is not authorized.")
+    records = _load_vault_records(_vault_cipher())
+    record = next(
+        (item for item in records if item.get("application_id") == application_id),
+        None,
+    )
+    if record is None or record.get("tenant_id") != principal.tenant_id:
+        raise PermissionError("The application is outside the principal's tenant scope.")
+    if permission == "read_metadata":
+        return {
+            key: record[key]
+            for key in ("application_id", "tenant_id", "stored_at", "governance_status")
+            if key in record
+        }
+    return record
+
 
 # ============================================================================
 # 1. MOCK INTERNAL DATABASES (Lloyds Bank Customer & Financial Records)
@@ -114,45 +361,138 @@ MOCK_VERIFIED_DOCUMENTS: Dict[str, Dict[str, Any]] = {
 # 2. MCP INTEGRATION LAYER (Third-Party Credit Reference Agency)
 # ============================================================================
 
-import threading
-
 def call_mcp_sync(tool_name: str, arguments: Dict[str, Any]) -> Any:
-    """
-    Executes an MCP tool call reliably across all environments (including Jupyter
-    and Python 3.14) by running in an isolated clean thread.
-    """
-    results = []
-    errors = []
+    """Call an allow-listed CRA tool through the authenticated network gateway."""
+    if tool_name != "get_credit_report":
+        raise ValueError(f"Unsupported CRA tool: {tool_name}")
+    gateway_url = os.getenv("CRA_MCP_GATEWAY_URL")
+    token_file = os.getenv("CRA_AGENT_JWT_FILE")
+    if not gateway_url:
+        raise RuntimeError("CRA_MCP_GATEWAY_URL is required; direct CRA calls are disabled.")
+    if not token_file:
+        raise RuntimeError("CRA_AGENT_JWT_FILE is required; direct CRA calls are disabled.")
+    parsed_url = urlsplit(gateway_url)
+    if parsed_url.scheme not in ("http", "https") or not parsed_url.hostname:
+        raise RuntimeError("CRA_MCP_GATEWAY_URL must be an absolute HTTP(S) URL.")
+    if parsed_url.scheme != "https" and parsed_url.hostname not in ("localhost", "127.0.0.1", "::1"):
+        raise RuntimeError("HTTPS is required for the CRA gateway outside loopback.")
+    try:
+        with open(token_file, "r", encoding="utf-8") as token_handle:
+            token = token_handle.read().strip()
+    except (OSError, UnicodeError) as exc:
+        raise RuntimeError("Unable to read the configured CRA agent token file.") from exc
+    if not token:
+        raise RuntimeError("CRA agent token file is empty.")
+    request_body = json.dumps({
+        "tool_name": tool_name,
+        "arguments": arguments,
+    }).encode("utf-8")
+    request = urllib.request.Request(
+        gateway_url.rstrip("/") + "/v1/tools/call",
+        data=request_body,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    ca_file = os.getenv("CRA_GATEWAY_CA_FILE")
+    tls_context = ssl.create_default_context(cafile=ca_file) if ca_file else None
+    try:
+        with urllib.request.urlopen(request, timeout=10, context=tls_context) as response:
+            response_body = response.read(128 * 1024 + 1)
+            if len(response_body) > 128 * 1024:
+                raise RuntimeError("CRA MCP gateway response exceeded the size limit.")
+            if response.status != 200:
+                raise RuntimeError(f"CRA MCP gateway returned HTTP {response.status}.")
+            result = json.loads(response_body)
+            if not isinstance(result, dict) or "result" not in result:
+                raise RuntimeError("CRA MCP gateway returned an invalid response.")
+            return result["result"]
+    except urllib.error.HTTPError as exc:
+        exc.close()
+        raise RuntimeError(f"CRA MCP gateway rejected the request (HTTP {exc.code}).") from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError("CRA MCP gateway is unavailable.") from exc
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("CRA MCP gateway returned invalid JSON.") from exc
 
-    def _worker():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
 
-        async def _run():
-            async with Client(cra_mcp) as client:
-                res = await client.call_tool(tool_name, arguments)
-                return res.data
+def mortgage_action_policy_allows(
+    *,
+    requested_loan_amount_gbp: float,
+    affordability_passed: bool,
+    is_standard_profile: bool,
+    adverse_credit_flags: int,
+) -> bool:
+    """Use the authenticated gateway/OPA policy or an explicit local mock policy."""
+    mode = os.getenv("MORTGAGE_ACTION_POLICY_MODE", "mock").lower()
+    arguments = {
+        "requested_loan_amount_gbp": requested_loan_amount_gbp,
+        "affordability_passed": affordability_passed,
+        "is_standard_profile": is_standard_profile,
+        "adverse_credit_flags": adverse_credit_flags,
+    }
+    if mode == "mock":
+        return (
+            _is_finite_number(requested_loan_amount_gbp)
+            and requested_loan_amount_gbp > 0
+            and requested_loan_amount_gbp <= HUMAN_MANDATE_ESCALATION_THRESHOLD_GBP
+            and affordability_passed is True
+            and is_standard_profile is True
+            and type(adverse_credit_flags) is int
+            and adverse_credit_flags == 0
+        )
+    if mode != "external":
+        raise RuntimeError("MORTGAGE_ACTION_POLICY_MODE must be 'mock' or 'external'.")
 
-        try:
-            results.append(loop.run_until_complete(_run()))
-        except Exception as exc:
-            errors.append(exc)
-        finally:
-            loop.close()
+    gateway_url = os.getenv("CRA_MCP_GATEWAY_URL")
+    token_file = os.getenv("CRA_AGENT_JWT_FILE")
+    if not gateway_url or not token_file:
+        raise RuntimeError("External mortgage policy requires the authenticated CRA gateway and agent JWT.")
+    parsed_url = urlsplit(gateway_url)
+    if parsed_url.scheme not in ("http", "https") or not parsed_url.hostname:
+        raise RuntimeError("CRA_MCP_GATEWAY_URL must be an absolute HTTP(S) URL.")
+    if parsed_url.scheme != "https" and parsed_url.hostname not in ("localhost", "127.0.0.1", "::1"):
+        raise RuntimeError("HTTPS is required for the mortgage policy gateway outside loopback.")
+    try:
+        with open(token_file, "r", encoding="utf-8") as token_handle:
+            token = token_handle.read().strip()
+    except (OSError, UnicodeError) as exc:
+        raise RuntimeError("Unable to read the configured CRA agent token file.") from exc
+    if not token:
+        raise RuntimeError("CRA agent token file is empty.")
 
-    t = threading.Thread(target=_worker)
-    t.start()
-    t.join()
+    request = urllib.request.Request(
+        gateway_url.rstrip("/") + "/v1/policies/mortgage-action",
+        data=json.dumps(arguments).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    ca_file = os.getenv("CRA_GATEWAY_CA_FILE")
+    tls_context = ssl.create_default_context(cafile=ca_file) if ca_file else None
+    try:
+        with urllib.request.urlopen(request, timeout=5, context=tls_context) as response:
+            body = response.read(4097)
+            if response.status != 200 or len(body) > 4096:
+                raise RuntimeError("Mortgage action policy gateway returned an invalid response.")
+            response_data = json.loads(body)
+    except urllib.error.HTTPError as exc:
+        exc.close()
+        raise RuntimeError(f"Mortgage action policy gateway rejected the request (HTTP {exc.code}).") from exc
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+        raise RuntimeError("Mortgage action policy gateway is unavailable.") from exc
+    if not isinstance(response_data, dict) or type(response_data.get("allowed")) is not bool:
+        raise RuntimeError("Mortgage action policy gateway returned an invalid decision.")
+    return response_data["allowed"]
 
-    if errors:
-        raise errors[0]
-    return results[0]
 
 @tool
 def pull_credit_report_mcp(applicant_name: str, national_insurance_number: str) -> str:
-    """
-    [MCP LAYER TOOL] Pulls official credit report from third-party Credit Reference Agency
-    over the Model Context Protocol (MCP).
+    """Fetch a minimized credit summary from the CRA through the MCP boundary.
     
     Args:
         applicant_name: Full name of applicant.
@@ -165,7 +505,19 @@ def pull_credit_report_mcp(applicant_name: str, national_insurance_number: str) 
             "national_insurance_number": national_insurance_number
         }
     )
-    return json.dumps(report, indent=2)
+    safe_report = {
+        "status": (
+            "SUCCESS"
+            if isinstance(report, dict) and report.get("status") == "SUCCESS"
+            else "MANUAL_REVIEW_REQUIRED"
+        )
+    }
+    if isinstance(report, dict):
+        for field in ("credit_score", "ccj_count", "defaults_count", "bankruptcies"):
+            value = report.get(field)
+            if isinstance(value, int) and not isinstance(value, bool):
+                safe_report[field] = value
+    return json.dumps(safe_report, indent=2)
 
 
 # ============================================================================
@@ -175,8 +527,8 @@ def pull_credit_report_mcp(applicant_name: str, national_insurance_number: str) 
 @tool
 def lookup_lloyds_account(account_number: str, sort_code: str = "30-90-89") -> str:
     """
-    [INTERNAL TOOL] Looks up an applicant's existing Lloyds current account, savings balance,
-    and 12-month transaction/cashflow history.
+    [INTERNAL TOOL] Returns only salary-credit, debt-commitment, and KYC status fields
+    needed for assessment.
     
     Args:
         account_number: 8-digit UK account number.
@@ -186,21 +538,29 @@ def lookup_lloyds_account(account_number: str, sort_code: str = "30-90-89") -> s
     if acc in MOCK_LLOYDS_ACCOUNTS:
         data = MOCK_LLOYDS_ACCOUNTS[acc].copy()
         data["lookup_timestamp"] = datetime.now(timezone.utc).isoformat()
-        return json.dumps(data, indent=2)
+        data["status"] = "FOUND"
+        return json.dumps(
+            _project_fields(
+                data,
+                (
+                    "status",
+                    "average_monthly_salary_credit_gbp",
+                    "existing_debt_commitments_monthly_gbp",
+                    "kyc_verified",
+                ),
+            ),
+            indent=2,
+        )
     
     # Generic mock fallback
     return json.dumps({
         "status": "NOT_FOUND",
-        "account_number": acc,
-        "sort_code": sort_code,
-        "message": "Account not found in internal Lloyds customer database."
+        "message": "Account not found in internal Lloyds customer database.",
     }, indent=2)
 
 @tool
 def ingest_applicant_documents(applicant_name: str, document_types: str = "payslips,bank_statements") -> str:
-    """
-    [DOCUMENT INGESTION TOOL] Ingests and parses uploaded verification documents (payslips,
-    bank statements, P60), verifying income, employer, tax deductions, and consistency.
+    """Extract the minimum verified income and employment fields needed for assessment.
     
     Args:
         applicant_name: Name of applicant.
@@ -211,16 +571,27 @@ def ingest_applicant_documents(applicant_name: str, document_types: str = "paysl
         doc["documents_analyzed"] = document_types.split(",")
         doc["ocr_confidence"] = 0.985
         doc["verification_status"] = "VERIFIED" if doc["payslips_verified"] else "FAILED_VERIFICATION"
-        return json.dumps(doc, indent=2)
-    
+        return json.dumps(
+            _project_fields(
+                doc,
+                (
+                    "employer_name",
+                    "employment_type",
+                    "employment_length_years",
+                    "gross_annual_income_gbp",
+                    "net_monthly_pay_gbp",
+                    "payslips_verified",
+                    "bank_statements_cross_verified",
+                    "verification_status",
+                ),
+            ),
+            indent=2,
+        )
+
     return json.dumps({
-        "applicant_name": applicant_name,
         "verification_status": "MANUAL_REVIEW_REQUIRED",
-        "gross_annual_income_gbp": 50000.0,
-        "net_monthly_pay_gbp": 3100.0,
-        "employer_name": "Standard Employer",
-        "payslips_verified": True,
-        "notes": "Standard document ingestion without exceptions."
+        "payslips_verified": False,
+        "bank_statements_cross_verified": False,
     }, indent=2)
 
 @tool
@@ -319,9 +690,9 @@ def evaluate_decision_authority(
     lti_ratio: float = 4.0
 ) -> str:
     """
-    [DECISION AUTHORITY TOOL] Applies Lloyds risk authority limits.
-    May auto-issue a Decision in Principle (DIP) up to £500,000 for standard applicants.
-    Escalates to a human underwriter if loan exceeds £500,000 OR if non-standard profile.
+    [DECISION AUTHORITY TOOL] Applies prototype lending referral rules.
+    It never approves or issues a Decision in Principle. Cases that meet the
+    configured automated checks are held for authorized human review.
     
     Args:
         applicant_name: Full name.
@@ -332,15 +703,38 @@ def evaluate_decision_authority(
         adverse_credit_flags: Number of CCJs, defaults, or bankruptcies.
         lti_ratio: Loan-to-income ratio.
     """
-    AUTO_APPROVAL_LIMIT_GBP = 500000.0
-    MIN_STANDARD_CREDIT_SCORE = 700
+    if (
+        not _is_finite_number(requested_loan_amount)
+        or requested_loan_amount <= 0
+        or type(affordability_passed) is not bool
+        or type(is_standard_profile) is not bool
+        or isinstance(credit_score, bool)
+        or not isinstance(credit_score, int)
+        or not 0 <= credit_score <= 999
+        or isinstance(adverse_credit_flags, bool)
+        or not isinstance(adverse_credit_flags, int)
+        or adverse_credit_flags < 0
+        or not _is_finite_number(lti_ratio)
+        or lti_ratio < 0
+    ):
+        raise ValueError("Decision-policy inputs are invalid.")
 
     decision = {
-        "applicant_name": applicant_name,
         "requested_loan_amount_gbp": requested_loan_amount,
         "evaluated_at": datetime.now(timezone.utc).isoformat(),
-        "auto_approval_threshold_gbp": AUTO_APPROVAL_LIMIT_GBP
+        "human_mandate_escalation_threshold_gbp": HUMAN_MANDATE_ESCALATION_THRESHOLD_GBP
     }
+    try:
+        policy_allowed = mortgage_action_policy_allows(
+            requested_loan_amount_gbp=requested_loan_amount,
+            affordability_passed=affordability_passed,
+            is_standard_profile=is_standard_profile,
+            adverse_credit_flags=adverse_credit_flags,
+        )
+        policy_unavailable = False
+    except RuntimeError:
+        policy_allowed = False
+        policy_unavailable = True
 
     # 1. Hard disqualification / adverse credit
     if adverse_credit_flags > 0 or credit_score < MIN_STANDARD_CREDIT_SCORE:
@@ -351,7 +745,7 @@ def evaluate_decision_authority(
             f"Adverse credit or sub-prime score: Score={credit_score} (min standard {MIN_STANDARD_CREDIT_SCORE}), Adverse flags={adverse_credit_flags}."
         ]
         decision["action_required"] = "Full manual underwrite and risk mitigation assessment required."
-        return json.dumps(decision, indent=2)
+        return _validated_decision_json(decision)
 
     # 2. Affordability failure
     if not affordability_passed:
@@ -362,7 +756,7 @@ def evaluate_decision_authority(
             f"Affordability stress test failed at requested loan of £{requested_loan_amount:,.2f}."
         ]
         decision["action_required"] = "Underwriter review of alternative term lengths or reduced borrowing amount."
-        return json.dumps(decision, indent=2)
+        return _validated_decision_json(decision)
 
     # 3. Non-standard applicant category (e.g. contractor/complex income)
     if not is_standard_profile:
@@ -373,79 +767,87 @@ def evaluate_decision_authority(
             "Applicant profile classified as non-standard (e.g. self-employed/contractor/complex income)."
         ]
         decision["action_required"] = "Verify 2 years SA302 / tax calculations."
-        return json.dumps(decision, indent=2)
+        return _validated_decision_json(decision)
 
     # 4. Limit check (£500,000 threshold)
-    if requested_loan_amount > AUTO_APPROVAL_LIMIT_GBP:
+    if requested_loan_amount > HUMAN_MANDATE_ESCALATION_THRESHOLD_GBP:
         decision["outcome"] = "ESCALATE_TO_HUMAN_UNDERWRITER"
         decision["dip_status"] = "REFERRED"
         decision["escalation_tier"] = "Senior Mortgage Mandate Underwriter"
         decision["escalation_reasons"] = [
-            f"Requested loan amount £{requested_loan_amount:,.2f} exceeds AI automated authority limit of £{AUTO_APPROVAL_LIMIT_GBP:,.2f}."
+            f"Requested loan amount £{requested_loan_amount:,.2f} exceeds the configured human-mandate escalation threshold of £{HUMAN_MANDATE_ESCALATION_THRESHOLD_GBP:,.2f}."
         ]
         decision["action_required"] = "Mandate sign-off required for loans exceeding £500,000."
-        return json.dumps(decision, indent=2)
+        return _validated_decision_json(decision)
 
-    # 5. Passed all automated criteria - AUTO-ISSUE DIP
-    dip_ref = f"DIP-LLOYDS-{abs(hash(applicant_name + str(requested_loan_amount))) % 10000000:07d}"
-    expiry_date = (datetime.now(timezone.utc) + timedelta(days=90)).strftime("%Y-%m-%d")
+    if not policy_allowed:
+        decision["outcome"] = "ESCALATE_TO_HUMAN_UNDERWRITER"
+        decision["dip_status"] = "REFERRED"
+        decision["escalation_tier"] = "Mortgage Underwriter"
+        decision["escalation_reasons"] = [
+            "The external mortgage action policy could not authorize this case."
+            if policy_unavailable
+            else "The mortgage action policy denied standard assessment; human review is required."
+        ]
+        decision["action_required"] = (
+            "Policy service unavailable; do not assess or issue a DIP until an authorized "
+            "underwriter reviews the case."
+            if policy_unavailable
+            else "Do not issue a DIP; refer the case to an authorized mortgage underwriter."
+        )
+        return _validated_decision_json(decision)
 
-    decision["outcome"] = "AUTO_ISSUED_DIP"
-    decision["dip_status"] = "ACCEPTED"
-    decision["dip_reference"] = dip_ref
-    decision["approved_loan_amount_gbp"] = requested_loan_amount
-    decision["indicative_interest_rate_pct"] = 4.45
-    decision["certificate_valid_until"] = expiry_date
-    decision["governance_signoff"] = "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant"
-    decision["message"] = (
-        f"Congratulations {applicant_name}! Your Lloyds Decision in Principle has been automatically approved for up to "
-        f"£{requested_loan_amount:,.2f} under reference {dip_ref}."
+    # Passing automated checks is not an approval; require an authorized person.
+    decision["outcome"] = "PENDING_HUMAN_REVIEW"
+    decision["dip_status"] = "PENDING_REVIEW"
+    decision["escalation_tier"] = "Authorized Mortgage Underwriter"
+    decision["escalation_reasons"] = [
+        "Automated checks passed; an authorized human must review and decide."
+    ]
+    decision["action_required"] = (
+        "Do not issue or communicate a DIP until an authorized underwriter "
+        "has completed and recorded the review."
     )
-    return json.dumps(decision, indent=2)
+    return _validated_decision_json(decision)
 
 @tool
 def store_mortgage_application(application_payload_json: str) -> str:
     """
-    [SECURE STORAGE TOOL] Persists the complete mortgage application into the encrypted
-    vault storage: applicant PII, National Insurance Number, bank details, credit bureau data,
-    affordability calculations, and final decision record with full audit metadata.
+    [SECURE STORAGE TOOL] Persists the application in an authenticated, encrypted vault.
     
     Args:
         application_payload_json: Full JSON string containing all verified application data.
     """
-    try:
-        data = json.loads(application_payload_json) if isinstance(application_payload_json, str) else application_payload_json
-    except Exception:
-        data = {"raw_payload": application_payload_json}
+    data = (
+        json.loads(application_payload_json)
+        if isinstance(application_payload_json, str)
+        else application_payload_json
+    )
+    if not isinstance(data, dict):
+        raise ValueError("Application payload must be a JSON object.")
+    tenant_id = data.get("tenant_id")
+    if not isinstance(tenant_id, str) or not tenant_id.strip():
+        raise ValueError("A tenant_id is required for mock row-level vault isolation.")
 
     # Ensure application metadata
-    app_id = data.get("application_id", f"APP-{abs(hash(str(data))) % 1000000:06d}")
+    app_id = data.get("application_id") or f"APP-{uuid.uuid4().hex.upper()}"
     data["application_id"] = app_id
     data["stored_at"] = datetime.now(timezone.utc).isoformat()
-    data["compliance_certifications"] = ["GDPR", "FCA_MCOB", "AI_GOVERNANCE_AUDITED"]
+    data["governance_status"] = "PROTOTYPE_NOT_CERTIFIED"
 
-    # Read existing vault records
-    records = []
-    if os.path.exists(VAULT_STORAGE_FILE):
-        try:
-            with open(VAULT_STORAGE_FILE, "r", encoding="utf-8") as f:
-                records = json.load(f)
-        except Exception:
-            records = []
-
-    # Update or append
+    cipher = _vault_cipher()
+    records = _load_vault_records(cipher)
     records = [r for r in records if r.get("application_id") != app_id]
     records.append(data)
-
-    with open(VAULT_STORAGE_FILE, "w", encoding="utf-8") as f:
-        json.dump(records, f, indent=2)
+    _write_vault_records(records, cipher)
 
     return json.dumps({
         "status": "STORED_SUCCESSFULLY",
         "application_id": app_id,
         "vault_records_count": len(records),
-        "vault_path": VAULT_STORAGE_FILE,
-        "message": "Application, credit bureau report, bank details, and decision safely persisted for audit."
+        "encrypted": True,
+        "governance_status": "PROTOTYPE_NOT_CERTIFIED",
+        "message": "Application stored in the authenticated encrypted vault."
     }, indent=2)
 
 

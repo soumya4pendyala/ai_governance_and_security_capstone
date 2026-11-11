@@ -16,3 +16,8 @@ ipykernel==7.2.0
 nbformat==5.10.4
 nbclient==0.10.4
 cryptography==50.0.0
+PyJWT==2.10.1
+presidio-analyzer==2.2.366
+presidio-anonymizer==2.2.366
+spacy==3.8.16
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl

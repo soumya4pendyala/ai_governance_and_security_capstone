@@ -41,13 +41,12 @@ WORKDIR /app
 
 # Copy application source code with immutable read-only ownership
 COPY --chown=keystone:keystone lloydsagent /app/lloydsagent
-COPY --chown=keystone:keystone security /app/security
 COPY --chown=keystone:keystone README.md /app/
 
 # Create designated scratch/vault mount directory with restricted permissions
-RUN mkdir -p /app/vault /tmp && \
-    chown -R keystone:keystone /app/vault /tmp && \
-    chmod 700 /app/vault /tmp
+RUN mkdir -p /app/vault /app/audit /tmp && \
+    chown -R keystone:keystone /app/vault /app/audit /tmp && \
+    chmod 700 /app/vault /app/audit /tmp
 
 # Enforce non-root execution
 USER 10001:10001

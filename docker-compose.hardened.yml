@@ -37,23 +37,116 @@ services:
           cpus: "0.5"
           memory: 512M
 
-    # 5. Network Segregation (Egress restricted to Internal Gateway & CRA)
+    # 5. The agent can reach only the gateway, never the CRA tool service.
     networks:
       - keystone-internal-net
-      - cra-gateway-net
+      - cra-agent-gateway-net
 
     # 6. Secure Secrets Injection (Mounted as in-memory tmpfs files, never ENV vars)
     secrets:
       - keystone_llm_api_key
-      - cra_mcp_scoped_token
+      - mortgage_vault_key
+      - cra_agent_token
+      - cra_gateway_ca
+    environment:
+      MORTGAGE_VAULT_KEY_FILE: /run/secrets/mortgage_vault_key
+      MORTGAGE_ACTION_POLICY_MODE: external
+      CRA_MCP_GATEWAY_URL: https://cra-mcp-gateway:8443
+      CRA_AGENT_JWT_FILE: /run/secrets/cra_agent_token
+      CRA_GATEWAY_CA_FILE: /run/secrets/cra_gateway_ca
 
-  # Credit Reference Agency (CRA) Isolated MCP Gateway Service
+  # Only this gateway accepts agent calls and issues narrowly scoped CRA tokens.
   cra-mcp-gateway:
     build:
       context: .
       dockerfile: Dockerfile.hardened
-    command: ["python", "-m", "lloydsagent.cra_mcp_gateway"]
+    entrypoint: ["python", "-m", "lloydsagent.cra_mcp_gateway"]
     container_name: cra-mcp-gateway-service
+    read_only: true
+    user: "10001:10001"
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - cra-agent-gateway-net
+      - cra-gateway-tool-net
+      - cra-policy-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s=socket.create_connection(('127.0.0.1', 8443), 2); s.close()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - cra_agent_jwt_public_key
+      - cra_downstream_private_key
+      - cra_gateway_tls_cert
+      - cra_gateway_tls_key
+      - cra_tool_ca
+    environment:
+      CRA_GATEWAY_HOST: 0.0.0.0
+      CRA_GATEWAY_PORT: "8443"
+      CRA_AGENT_JWT_PUBLIC_KEY_FILE: /run/secrets/cra_agent_jwt_public_key
+      CRA_DOWNSTREAM_PRIVATE_KEY_FILE: /run/secrets/cra_downstream_private_key
+      CRA_GATEWAY_TLS_CERT_FILE: /run/secrets/cra_gateway_tls_cert
+      CRA_GATEWAY_TLS_KEY_FILE: /run/secrets/cra_gateway_tls_key
+      CRA_TOOL_SERVICE_URL: https://cra-mcp-server:8444
+      CRA_TOOL_SERVICE_CA_FILE: /run/secrets/cra_tool_ca
+      OPA_DECISION_URL: https://cra-opa:8181/v1/data/keystone/authz/allow
+      MORTGAGE_ACTION_OPA_DECISION_URL: https://cra-opa:8181/v1/data/keystone/authz/allow_mortgage_action
+      OPA_CA_FILE: /run/secrets/cra_tool_ca
+      CRA_GATEWAY_AUDIT_FILE: /app/audit/cra-gateway-audit.jsonl
+    volumes:
+      - cra-gateway-audit:/app/audit
+
+  # This service is isolated from the agent and rejects calls without a
+  # single-use, gateway-signed, short-lived token scoped to get_credit_report.
+  cra-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.hardened
+    entrypoint: ["python", "-m", "lloydsagent.cra_tool_server"]
+    container_name: cra-tool-service
+    read_only: true
+    user: "10001:10001"
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - cra-gateway-tool-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s=socket.create_connection(('127.0.0.1', 8444), 2); s.close()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - cra_downstream_public_key
+      - cra_tool_tls_cert
+      - cra_tool_tls_key
+    environment:
+      CRA_TOOL_HOST: 0.0.0.0
+      CRA_TOOL_PORT: "8444"
+      CRA_DOWNSTREAM_PUBLIC_KEY_FILE: /run/secrets/cra_downstream_public_key
+      CRA_TOOL_TLS_CERT_FILE: /run/secrets/cra_tool_tls_cert
+      CRA_TOOL_TLS_KEY_FILE: /run/secrets/cra_tool_tls_key
+
+  # Policy decision point. Only the gateway can reach OPA; the agent has no
+  # policy API access and cannot bypass the gateway's decision.
+  cra-opa:
+    image: openpolicyagent/opa:1.0.0
+    container_name: cra-opa-policy-service
+    command:
+      - run
+      - --server
+      - --addr=0.0.0.0:8181
+      - --tls-cert-file=/run/secrets/opa_tls_cert
+      - --tls-private-key-file=/run/secrets/opa_tls_key
+      - /policy
     read_only: true
     user: "10001:10001"
     cap_drop:
@@ -61,23 +154,60 @@ services:
     security_opt:
       - no-new-privileges:true
     networks:
-      - cra-gateway-net
+      - cra-policy-net
     secrets:
-      - cra_mcp_scoped_token
+      - opa_tls_cert
+      - opa_tls_key
+    volumes:
+      - ./security/opa/keystone.rego:/policy/keystone.rego:ro
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m
 
 networks:
   # Internal agent network - strictly no direct public internet egress
   keystone-internal-net:
     driver: bridge
     internal: true
-  
-  # Point-to-point network between Keystone agent and CRA Gateway
-  cra-gateway-net:
+  cra-agent-gateway-net:
     driver: bridge
     internal: true
+  # The CRA tool server is deliberately absent from the agent-facing network.
+  cra-gateway-tool-net:
+    driver: bridge
+    internal: true
+  cra-policy-net:
+    driver: bridge
+    internal: true
+
+volumes:
+  cra-gateway-audit:
 
 secrets:
   keystone_llm_api_key:
     file: ./security/secrets/llm_api_key.secret
-  cra_mcp_scoped_token:
-    file: ./security/secrets/cra_scoped_token.secret
+  mortgage_vault_key:
+    file: ./security/secrets/mortgage_vault_key.secret
+  cra_agent_token:
+    file: ./security/secrets/cra_agent_token.jwt
+  cra_agent_jwt_public_key:
+    file: ./security/secrets/cra_agent_public_key.pem
+  cra_downstream_private_key:
+    file: ./security/secrets/cra_gateway_private_key.pem
+  cra_downstream_public_key:
+    file: ./security/secrets/cra_gateway_public_key.pem
+  cra_gateway_tls_cert:
+    file: ./security/secrets/cra_gateway_tls_cert.pem
+  cra_gateway_tls_key:
+    file: ./security/secrets/cra_gateway_tls_key.pem
+  cra_tool_tls_cert:
+    file: ./security/secrets/cra_tool_tls_cert.pem
+  cra_tool_tls_key:
+    file: ./security/secrets/cra_tool_tls_key.pem
+  cra_gateway_ca:
+    file: ./security/secrets/cra_internal_ca.pem
+  cra_tool_ca:
+    file: ./security/secrets/cra_internal_ca.pem
+  opa_tls_cert:
+    file: ./security/secrets/opa_tls_cert.pem
+  opa_tls_key:
+    file: ./security/secrets/opa_tls_key.pem

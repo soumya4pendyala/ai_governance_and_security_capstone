@@ -1,18 +1,6 @@
-"""
-Credit Reference Agency (CRA) MCP Server
------------------------------------------
-This module provides a Model Context Protocol (MCP) server representing an
-external third-party Credit Reference Agency (e.g. Experian / Equifax / TransUnion).
-Keystone interacts with this external boundary strictly over the MCP protocol.
-"""
+"""Synthetic CRA dataset and private lookup used by the authenticated tool service."""
 
-from fastmcp import FastMCP
 from typing import Dict, Any
-
-# Initialize FastMCP Server for Credit Reference Agency
-cra_mcp = FastMCP(
-    name="CreditReferenceAgency-MCP",
-)
 
 # Mock CRA Bureau Database
 MOCK_CRA_DATABASE: Dict[str, Dict[str, Any]] = {
@@ -69,19 +57,7 @@ MOCK_CRA_DATABASE: Dict[str, Dict[str, Any]] = {
     }
 }
 
-@cra_mcp.tool()
-def get_credit_report(applicant_name: str, national_insurance_number: str) -> Dict[str, Any]:
-    """
-    Pulls the applicant's official credit file and risk score from the Credit Reference Agency.
-    
-    Args:
-        applicant_name: Full legal name of the mortgage applicant.
-        national_insurance_number: UK National Insurance Number (e.g. QQ123456C).
-        
-    Returns:
-        Structured credit report containing credit score, active accounts, CCJs, defaults,
-        and electoral roll status.
-    """
+def _get_credit_report(applicant_name: str, national_insurance_number: str) -> Dict[str, Any]:
     ni_cleaned = national_insurance_number.strip().upper()
     
     if ni_cleaned in MOCK_CRA_DATABASE:
@@ -90,46 +66,7 @@ def get_credit_report(applicant_name: str, national_insurance_number: str) -> Di
         report["status"] = "SUCCESS"
         return report
     
-    # Generic synthetic fallback for arbitrary applicant
     return {
-        "status": "SUCCESS",
-        "applicant_name": applicant_name,
-        "national_insurance_number": ni_cleaned,
-        "credit_score": 750,
-        "score_band": "Good",
-        "score_range": "0-999",
-        "active_credit_accounts": 2,
-        "credit_utilization_pct": 20.0,
-        "ccj_count": 0,
-        "defaults_count": 0,
-        "bankruptcies": 0,
-        "electoral_roll_registered": True,
-        "electoral_roll_years": 2,
-        "delinquencies_24m": 0,
-        "risk_category": "Standard - Moderate Risk",
-        "bureau_reference": f"EXP-2026-{abs(hash(ni_cleaned)) % 1000000:06d}"
+        "status": "MANUAL_REVIEW_REQUIRED",
+        "message": "No verified synthetic CRA record is available for this applicant.",
     }
-
-@cra_mcp.tool()
-def verify_identity(national_insurance_number: str, date_of_birth: str, current_postcode: str) -> Dict[str, Any]:
-    """
-    Verifies the applicant's identity against electoral roll and credit agency identity records.
-    
-    Args:
-        national_insurance_number: UK National Insurance Number.
-        date_of_birth: Date of birth (YYYY-MM-DD).
-        current_postcode: UK residential postcode.
-    """
-    return {
-        "status": "VERIFIED",
-        "national_insurance_number": national_insurance_number.strip().upper(),
-        "identity_confidence_score": 0.99,
-        "aml_pep_sanctions_clear": True,
-        "electoral_roll_match": True,
-        "address_history_verified_years": 5
-    }
-
-if __name__ == "__main__":
-    # When run directly, start stdio MCP server
-    cra_mcp.run()
-

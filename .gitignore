@@ -1,1 +1,6 @@
 .env
+mortgage_applications_vault.json
+lloydsagent/.mortgage-vault-*.tmp
+security/secrets/
+__pycache__/
+*.py[cod]
