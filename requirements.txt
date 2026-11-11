@@ -1,0 +1,18 @@
+# Keystone AI Mortgage Agent - Production Remediated Pinned Dependencies
+# Milestone M6.1 Supply Chain Security & CVE Remediation
+langchain==1.3.9
+langchain-community==0.4.1
+langchain-core==1.3.3
+langchain-openai==1.2.1
+langchain-groq==1.1.2
+python-dotenv==1.2.2
+langchain-google-genai==4.2.0
+mcp==2.3.0
+fastmcp==4.1.8
+pydantic==2.12.5
+safetensors==0.7.0
+nest_asyncio==1.6.0
+ipykernel==7.2.0
+nbformat==5.10.4
+nbclient==0.10.4
+cryptography==50.0.0

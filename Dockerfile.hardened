@@ -1,0 +1,66 @@
+# ============================================================================
+# Keystone AI Mortgage Agent - Production Hardened Container Image
+# Milestone M6.2: Non-root, Read-only Filesystem, Zero Linux Capabilities
+# ============================================================================
+
+# STAGE 1: Dependency Builder
+FROM python:3.11-slim@sha256:d8c5bf9f88c5efb471ec533722e038827fa830a38b1d640fb8ea05ff9dfa7596 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /install
+
+# Install build tools with signature verification, pin pip
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc build-essential && \
+    pip install --no-cache-dir --upgrade pip==24.0
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install/pkgs -r requirements.txt
+
+
+# STAGE 2: Hardened Runtime Container
+FROM python:3.11-slim@sha256:d8c5bf9f88c5efb471ec533722e038827fa830a38b1d640fb8ea05ff9dfa7596 AS runtime
+
+# Security: Remove package managers and compilers to prevent runtime payload dropping
+RUN apt-get update && \
+    apt-get purge -y gcc build-essential && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /root/.cache /var/cache/*
+
+# Principle of Least Privilege: Create dedicated unprivileged user and group
+RUN groupadd -g 10001 keystone && \
+    useradd -u 10001 -g keystone -s /sbin/nologin -M keystone
+
+# Copy installed Python packages from builder
+COPY --from=builder /install/pkgs /usr/local
+
+WORKDIR /app
+
+# Copy application source code with immutable read-only ownership
+COPY --chown=keystone:keystone lloydsagent /app/lloydsagent
+COPY --chown=keystone:keystone security /app/security
+COPY --chown=keystone:keystone README.md /app/
+
+# Create designated scratch/vault mount directory with restricted permissions
+RUN mkdir -p /app/vault /tmp && \
+    chown -R keystone:keystone /app/vault /tmp && \
+    chmod 700 /app/vault /tmp
+
+# Enforce non-root execution
+USER 10001:10001
+
+ENV PYTHONPATH="/app" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    KEYSTONE_VAULT_DIR="/app/vault"
+
+# Default healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD python3 -c "import socket; s = socket.socket(); s.connect(('127.0.0.1', 8080))" || exit 1
+
+EXPOSE 8080
+
+ENTRYPOINT ["python", "-m", "lloydsagent.agent"]

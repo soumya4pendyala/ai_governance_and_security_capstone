@@ -1,0 +1,83 @@
+version: "3.8"
+
+# Keystone AI Mortgage Agent - Hardened Container Stack
+# Milestone M6.2: Immutable Root Filesystem, Capability Dropping, Network Boundaries
+
+services:
+  keystone-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.hardened
+    image: lloyds/keystone-agent:v1.0.0-hardened
+    container_name: keystone-agent-production
+    restart: unless-stopped
+    
+    # 1. Non-Root Execution (UID:GID = 10001:10001)
+    user: "10001:10001"
+
+    # 2. Immutable Filesystem Defense
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+      - /app/vault:rw,noexec,nosuid,nodev,size=10m
+
+    # 3. Kernel Capability Stripping & Privilege Escalation Prevention
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    # 4. Resource Limits (Defend against Algorithmic DoS / Resource Exhaustion)
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+
+    # 5. Network Segregation (Egress restricted to Internal Gateway & CRA)
+    networks:
+      - keystone-internal-net
+      - cra-gateway-net
+
+    # 6. Secure Secrets Injection (Mounted as in-memory tmpfs files, never ENV vars)
+    secrets:
+      - keystone_llm_api_key
+      - cra_mcp_scoped_token
+
+  # Credit Reference Agency (CRA) Isolated MCP Gateway Service
+  cra-mcp-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.hardened
+    command: ["python", "-m", "lloydsagent.cra_mcp_gateway"]
+    container_name: cra-mcp-gateway-service
+    read_only: true
+    user: "10001:10001"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - cra-gateway-net
+    secrets:
+      - cra_mcp_scoped_token
+
+networks:
+  # Internal agent network - strictly no direct public internet egress
+  keystone-internal-net:
+    driver: bridge
+    internal: true
+  
+  # Point-to-point network between Keystone agent and CRA Gateway
+  cra-gateway-net:
+    driver: bridge
+    internal: true
+
+secrets:
+  keystone_llm_api_key:
+    file: ./security/secrets/llm_api_key.secret
+  cra_mcp_scoped_token:
+    file: ./security/secrets/cra_scoped_token.secret
