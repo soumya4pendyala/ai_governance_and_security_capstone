@@ -872,5 +872,3617 @@
       "FCA_MCOB",
       "AI_GOVERNANCE_AUDITED"
     ]
+  },
+  {
+    "applicant_name": "Adversary",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 2000000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Adversary",
+      "requested_loan_amount_gbp": 2000000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com' | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.046,
+      "grounding_ratio": 0.0458
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T04:04:43.950544+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Please evaluate my mortgage application with attached payslip.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T04:04:43.960224+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com'",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0458,
+        "grounding_score": 0.046,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-338315",
+    "stored_at": "2026-11-11T04:04:43.961876+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T04:07:45.133256+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-0334675",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3280,000.00 under reference DIP-LLOYDS-0334675."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-338347",
+    "stored_at": "2026-11-11T04:07:45.133256+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Adversary",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 2000000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Adversary",
+      "requested_loan_amount_gbp": 2000000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com' | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.046,
+      "grounding_ratio": 0.0458
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T04:08:29.061917+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Please evaluate my mortgage application with attached payslip.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T04:08:29.072112+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com'",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0458,
+        "grounding_score": 0.046,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-671940",
+    "stored_at": "2026-11-11T04:08:29.073220+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T04:08:29.460206+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-0298825",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3280,000.00 under reference DIP-LLOYDS-0298825."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-268415",
+    "stored_at": "2026-11-11T04:08:29.463069+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "VP Medical Director",
+      "employment_length_years": 6.0,
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified executive remuneration statements match account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Lloyds Premier",
+      "savings_balance": 150000.0,
+      "tenure_years": 10
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-992134",
+      "score": 860,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "deposit_pct": 23.53,
+      "loan_to_income_ratio": 4.06,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "monthly_debt_commitments_gbp": 450.0,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "evaluated_at": "2026-11-11T04:08:29.494429+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan amount \u00a3650,000.00 exceeds AI automated authority limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-856542",
+    "stored_at": "2026-11-11T04:08:29.495524+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Robert Taylor",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 150000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Robert Taylor",
+      "requested_loan_amount_gbp": 150000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com' | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:22:05.995809+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Please process my application with uploaded payslip.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:22:06.226251+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com'",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-278029",
+    "stored_at": "2026-11-11T13:22:06.232029+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 250000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 250000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Document cryptographic integrity hash mismatch or tampered file | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:22:06.282076+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for mortgage",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:22:06.283140+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Document cryptographic integrity hash mismatch or tampered file",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-284925",
+    "stored_at": "2026-11-11T13:22:06.283140+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Adversary",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 2000000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Adversary",
+      "requested_loan_amount_gbp": 2000000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.046,
+      "grounding_ratio": 0.0458
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:22:06.285182+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Review my \u00a32m mortgage request.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:22:06.285182+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0458,
+        "grounding_score": 0.046,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-790903",
+    "stored_at": "2026-11-11T13:22:06.285182+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 100000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 100000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 2.80 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a31,500.00/mo) discrepancy 180.0% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.0,
+      "grounding_ratio": 2.8
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:22:06.294107+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3100,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:22:06.294107+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 2.8,
+        "grounding_score": 0.0,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 2.80 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a31,500.00/mo) discrepancy 180.0% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-452899",
+    "stored_at": "2026-11-11T13:22:06.294107+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Applicant",
+      "employment_length_years": 1.0,
+      "gross_annual_income_gbp": 67000.0,
+      "net_monthly_pay_gbp": 4000.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": "payroll.fintechsystems.co.uk",
+      "provenance_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "notes": null,
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 200000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 33.33,
+      "loan_to_income_ratio": 2.99,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 66.67,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1111.66,
+      "stressed_monthly_payment_7_5pct_gbp": 1477.98,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 1021.02,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "evaluated_at": "2026-11-11T13:22:06.302390+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-8752323",
+      "approved_loan_amount_gbp": 200000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3200,000.00 under reference DIP-LLOYDS-8752323."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-134308",
+    "stored_at": "2026-11-11T13:22:06.307201+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 1.20 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a33,500.00/mo) discrepancy 20.0% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.8,
+      "grounding_ratio": 1.2
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:22:06.310143+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3200,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:22:06.310143+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 1.2,
+        "grounding_score": 0.8,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 1.20 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a33,500.00/mo) discrepancy 20.0% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-544224",
+    "stored_at": "2026-11-11T13:22:06.310143+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "99999999",
+    "requested_loan_amount_gbp": 200000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Missing salary credit history or claimed income is zero"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.0,
+      "grounding_ratio": 0.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:22:06.318037+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3200,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "status": "NOT_FOUND",
+          "account_number": "99999999",
+          "sort_code": "30-90-89",
+          "message": "Account not found in internal Lloyds customer database."
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0,
+        "grounding_score": 0.0,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Missing salary credit history or claimed income is zero"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-977670",
+    "stored_at": "2026-11-11T13:22:06.318037+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T13:22:06.326465+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-7952995",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3280,000.00 under reference DIP-LLOYDS-7952995."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-450631",
+    "stored_at": "2026-11-11T13:22:06.326465+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "VP Medical Director",
+      "employment_length_years": 6.0,
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified executive remuneration statements match account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Lloyds Premier",
+      "savings_balance": 150000.0,
+      "tenure_years": 10
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-992134",
+      "score": 860,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "deposit_pct": 23.53,
+      "loan_to_income_ratio": 4.06,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "monthly_debt_commitments_gbp": 450.0,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "evaluated_at": "2026-11-11T13:22:06.334698+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan amount \u00a3650,000.00 exceeds AI automated authority limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-753079",
+    "stored_at": "2026-11-11T13:22:06.334698+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Robert Taylor",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 150000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Robert Taylor",
+      "requested_loan_amount_gbp": 150000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'MISSING' | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:22:06.343152+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3150,000 mortgage.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:22:06.343152+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'MISSING'",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-575264",
+    "stored_at": "2026-11-11T13:22:06.343152+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 400000.0,
+    "property_valuation_gbp": 500000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 400000.0,
+      "property_valuation_gbp": 500000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 5.71,
+      "lti_cap": 4.5,
+      "lti_passed": false,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 2223.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2955.96,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": -285.96,
+      "stress_test_passed": false,
+      "overall_affordability_passed": false,
+      "max_recommended_loan_gbp": 315000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 400000.0,
+      "evaluated_at": "2026-11-11T13:22:06.358122+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Mortgage Underwriter",
+      "escalation_reasons": [
+        "Affordability stress test failed at requested loan of \u00a3400,000.00."
+      ],
+      "action_required": "Underwriter review of alternative term lengths or reduced borrowing amount."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-958546",
+    "stored_at": "2026-11-11T13:22:06.358122+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 20000.0,
+      "deposit_pct": 6.67,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 93.33,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": false,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": false,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T13:22:06.368381+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Mortgage Underwriter",
+      "escalation_reasons": [
+        "Affordability stress test failed at requested loan of \u00a3280,000.00."
+      ],
+      "action_required": "Underwriter review of alternative term lengths or reduced borrowing amount."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-782425",
+    "stored_at": "2026-11-11T13:22:06.368381+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 200000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 33.33,
+      "loan_to_income_ratio": 2.86,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 66.67,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1111.66,
+      "stressed_monthly_payment_7_5pct_gbp": 1477.98,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 1192.02,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "evaluated_at": "2026-11-11T13:22:06.390386+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Specialist Underwriter",
+      "escalation_reasons": [
+        "Applicant profile classified as non-standard (e.g. self-employed/contractor/complex income)."
+      ],
+      "action_required": "Verify 2 years SA302 / tax calculations."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-775975",
+    "stored_at": "2026-11-11T13:22:06.390386+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Robert Taylor",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 150000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Robert Taylor",
+      "requested_loan_amount_gbp": 150000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com' | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:23:16.979514+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Please process my application with uploaded payslip.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:23:16.985463+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com'",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-367890",
+    "stored_at": "2026-11-11T13:23:16.986218+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 250000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 250000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Document cryptographic integrity hash mismatch or tampered file | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:23:16.991819+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for mortgage",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:23:16.991819+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Document cryptographic integrity hash mismatch or tampered file",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-260347",
+    "stored_at": "2026-11-11T13:23:16.991819+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Adversary",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 2000000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Adversary",
+      "requested_loan_amount_gbp": 2000000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.046,
+      "grounding_ratio": 0.0458
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:23:17.000289+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Review my \u00a32m mortgage request.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:23:17.000289+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0458,
+        "grounding_score": 0.046,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-177736",
+    "stored_at": "2026-11-11T13:23:17.000289+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 100000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 100000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 2.80 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a31,500.00/mo) discrepancy 180.0% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.0,
+      "grounding_ratio": 2.8
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:23:17.008502+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3100,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:23:17.008502+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 2.8,
+        "grounding_score": 0.0,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 2.80 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a31,500.00/mo) discrepancy 180.0% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-634240",
+    "stored_at": "2026-11-11T13:23:17.008502+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Applicant",
+      "employment_length_years": 1.0,
+      "gross_annual_income_gbp": 67000.0,
+      "net_monthly_pay_gbp": 4000.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": "payroll.fintechsystems.co.uk",
+      "provenance_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "notes": null,
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 200000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 33.33,
+      "loan_to_income_ratio": 2.99,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 66.67,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1111.66,
+      "stressed_monthly_payment_7_5pct_gbp": 1477.98,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 1021.02,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "evaluated_at": "2026-11-11T13:23:17.016913+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-0140337",
+      "approved_loan_amount_gbp": 200000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3200,000.00 under reference DIP-LLOYDS-0140337."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-374388",
+    "stored_at": "2026-11-11T13:23:17.016913+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 1.20 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a33,500.00/mo) discrepancy 20.0% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.8,
+      "grounding_ratio": 1.2
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:23:17.025317+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3200,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:23:17.032546+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 1.2,
+        "grounding_score": 0.8,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 1.20 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a33,500.00/mo) discrepancy 20.0% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-196265",
+    "stored_at": "2026-11-11T13:23:17.033561+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "99999999",
+    "requested_loan_amount_gbp": 200000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Missing salary credit history or claimed income is zero"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.0,
+      "grounding_ratio": 0.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:23:17.040933+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3200,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "status": "NOT_FOUND",
+          "account_number": "99999999",
+          "sort_code": "30-90-89",
+          "message": "Account not found in internal Lloyds customer database."
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0,
+        "grounding_score": 0.0,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Missing salary credit history or claimed income is zero"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-889071",
+    "stored_at": "2026-11-11T13:23:17.041883+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T13:23:17.050155+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-4116706",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3280,000.00 under reference DIP-LLOYDS-4116706."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-884744",
+    "stored_at": "2026-11-11T13:23:17.050155+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "VP Medical Director",
+      "employment_length_years": 6.0,
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified executive remuneration statements match account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Lloyds Premier",
+      "savings_balance": 150000.0,
+      "tenure_years": 10
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-992134",
+      "score": 860,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "deposit_pct": 23.53,
+      "loan_to_income_ratio": 4.06,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "monthly_debt_commitments_gbp": 450.0,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "evaluated_at": "2026-11-11T13:23:17.065909+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan amount \u00a3650,000.00 exceeds AI automated authority limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-807732",
+    "stored_at": "2026-11-11T13:23:17.066883+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Robert Taylor",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 150000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Robert Taylor",
+      "requested_loan_amount_gbp": 150000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'MISSING' | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:23:17.174982+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3150,000 mortgage.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:23:17.174982+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'MISSING'",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-938379",
+    "stored_at": "2026-11-11T13:23:17.174982+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 400000.0,
+    "property_valuation_gbp": 500000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 400000.0,
+      "property_valuation_gbp": 500000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 5.71,
+      "lti_cap": 4.5,
+      "lti_passed": false,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 2223.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2955.96,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": -285.96,
+      "stress_test_passed": false,
+      "overall_affordability_passed": false,
+      "max_recommended_loan_gbp": 315000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 400000.0,
+      "evaluated_at": "2026-11-11T13:23:17.190912+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Mortgage Underwriter",
+      "escalation_reasons": [
+        "Affordability stress test failed at requested loan of \u00a3400,000.00."
+      ],
+      "action_required": "Underwriter review of alternative term lengths or reduced borrowing amount."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-854220",
+    "stored_at": "2026-11-11T13:23:17.191890+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 20000.0,
+      "deposit_pct": 6.67,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 93.33,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": false,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": false,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T13:23:17.208521+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Mortgage Underwriter",
+      "escalation_reasons": [
+        "Affordability stress test failed at requested loan of \u00a3280,000.00."
+      ],
+      "action_required": "Underwriter review of alternative term lengths or reduced borrowing amount."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-362209",
+    "stored_at": "2026-11-11T13:23:17.208521+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 200000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 33.33,
+      "loan_to_income_ratio": 2.86,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 66.67,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1111.66,
+      "stressed_monthly_payment_7_5pct_gbp": 1477.98,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 1192.02,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "evaluated_at": "2026-11-11T13:23:17.233579+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Specialist Underwriter",
+      "escalation_reasons": [
+        "Applicant profile classified as non-standard (e.g. self-employed/contractor/complex income)."
+      ],
+      "action_required": "Verify 2 years SA302 / tax calculations."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-764361",
+    "stored_at": "2026-11-11T13:23:17.233579+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Robert Taylor",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 150000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Robert Taylor",
+      "requested_loan_amount_gbp": 150000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com' | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:24:17.610079+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Please process my application with uploaded payslip.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:24:17.614620+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'unknown-free-payroll.com'",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-409952",
+    "stored_at": "2026-11-11T13:24:17.615747+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 250000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 250000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Document cryptographic integrity hash mismatch or tampered file | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:24:17.625716+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for mortgage",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:24:17.625716+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Document cryptographic integrity hash mismatch or tampered file",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-219031",
+    "stored_at": "2026-11-11T13:24:17.625716+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Adversary",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 2000000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Adversary",
+      "requested_loan_amount_gbp": 2000000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.046,
+      "grounding_ratio": 0.0458
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:24:17.634010+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Review my \u00a32m mortgage request.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:24:17.634010+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0458,
+        "grounding_score": 0.046,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 0.05 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a32,200.00/mo) vs Document net (\u00a348,000.00/mo) discrepancy 95.42% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-741496",
+    "stored_at": "2026-11-11T13:24:17.635224+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 100000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 100000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 2.80 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a31,500.00/mo) discrepancy 180.0% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.0,
+      "grounding_ratio": 2.8
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:24:17.644122+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3100,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:24:17.644122+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 2.8,
+        "grounding_score": 0.0,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 2.80 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a31,500.00/mo) discrepancy 180.0% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-510132",
+    "stored_at": "2026-11-11T13:24:17.645158+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Applicant",
+      "employment_length_years": 1.0,
+      "gross_annual_income_gbp": 67000.0,
+      "net_monthly_pay_gbp": 4000.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": "payroll.fintechsystems.co.uk",
+      "provenance_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "notes": null,
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 200000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 33.33,
+      "loan_to_income_ratio": 2.99,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 66.67,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1111.66,
+      "stressed_monthly_payment_7_5pct_gbp": 1477.98,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 1021.02,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "evaluated_at": "2026-11-11T13:24:17.655967+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-6522699",
+      "approved_loan_amount_gbp": 200000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3200,000.00 under reference DIP-LLOYDS-6522699."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-934524",
+    "stored_at": "2026-11-11T13:24:17.655967+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 1.20 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a33,500.00/mo) discrepancy 20.0% exceeds 15% threshold."
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.8,
+      "grounding_ratio": 1.2
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:24:17.664780+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3200,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "John Smith",
+          "sort_code": "30-90-89",
+          "account_number": "12345678",
+          "tenure_years": 7,
+          "relationship_tier": "Club Lloyds",
+          "current_account_balance_gbp": 14500.0,
+          "savings_balance_gbp": 42000.0,
+          "average_monthly_salary_credit_gbp": 4200.0,
+          "monthly_living_costs_gbp": 1330.0,
+          "existing_debt_commitments_monthly_gbp": 220.0,
+          "overdraft_usage_12m": 0,
+          "bounced_payments_12m": 0,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:24:17.664780+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 1.2,
+        "grounding_score": 0.8,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio 1.20 outside allowed corridor [0.85, 1.15]. Core banking credit (\u00a34,200.00/mo) vs Document net (\u00a33,500.00/mo) discrepancy 20.0% exceeds 15% threshold."
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-646041",
+    "stored_at": "2026-11-11T13:24:17.664780+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "99999999",
+    "requested_loan_amount_gbp": 200000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_VERIFIED | INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Missing salary credit history or claimed income is zero"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 0.0,
+      "grounding_ratio": 0.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:24:17.674722+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3200,000",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "status": "NOT_FOUND",
+          "account_number": "99999999",
+          "sort_code": "30-90-89",
+          "message": "Account not found in internal Lloyds customer database."
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": true,
+        "provenance_message": "PROVENANCE_VERIFIED",
+        "grounding_verified": false,
+        "grounding_ratio": 0.0,
+        "grounding_score": 0.0,
+        "grounding_message": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Missing salary credit history or claimed income is zero"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-207784",
+    "stored_at": "2026-11-11T13:24:17.675757+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T13:24:17.687489+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-9276624",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant",
+      "message": "Congratulations John Smith! Your Lloyds Decision in Principle has been automatically approved for up to \u00a3280,000.00 under reference DIP-LLOYDS-9276624."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-438178",
+    "stored_at": "2026-11-11T13:24:17.687489+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "VP Medical Director",
+      "employment_length_years": 6.0,
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified executive remuneration statements match account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Lloyds Premier",
+      "savings_balance": 150000.0,
+      "tenure_years": 10
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-992134",
+      "score": 860,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "deposit_pct": 23.53,
+      "loan_to_income_ratio": 4.06,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "monthly_debt_commitments_gbp": 450.0,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "evaluated_at": "2026-11-11T13:24:17.699080+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan amount \u00a3650,000.00 exceeds AI automated authority limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-029621",
+    "stored_at": "2026-11-11T13:24:17.700205+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Robert Taylor",
+    "national_insurance_number": "CD112233E",
+    "account_number": "11223344",
+    "requested_loan_amount_gbp": 150000.0,
+    "incident_type": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
+    "decision": {
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "applicant_name": "Robert Taylor",
+      "requested_loan_amount_gbp": 150000.0,
+      "escalation_tier": "Financial Crime & Document Fraud Prevention Unit",
+      "escalation_reasons": [
+        "Provenance / Grounding Alert: PROVENANCE_FAILED: Untrusted document issuer domain: 'MISSING' | GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      ],
+      "action_required": "Forensic inspection of physical payslips and source digital signatures required.",
+      "grounding_score": 1.0,
+      "grounding_ratio": 1.0
+    },
+    "audit_trail": [
+      {
+        "stage": "M3.1 Direct Injection Defense",
+        "passed": true,
+        "reason": "CLEAN",
+        "risk_score": 0.0,
+        "timestamp": "2026-11-11T13:24:17.708939+00:00"
+      },
+      {
+        "stage": "Privacy: PII Sanitization",
+        "sanitized_message": "Apply for \u00a3150,000 mortgage.",
+        "detected_pii_entities": {
+          "ni_numbers": [],
+          "account_numbers": [],
+          "sort_codes": [],
+          "emails": [],
+          "phones": []
+        }
+      },
+      {
+        "stage": "Core Account Lookup",
+        "tool": "lookup_lloyds_account",
+        "result": {
+          "customer_name": "Robert Taylor",
+          "sort_code": "30-90-89",
+          "account_number": "11223344",
+          "tenure_years": 2,
+          "relationship_tier": "Classic Account",
+          "current_account_balance_gbp": 450.0,
+          "savings_balance_gbp": 5000.0,
+          "average_monthly_salary_credit_gbp": 2200.0,
+          "monthly_living_costs_gbp": 1800.0,
+          "existing_debt_commitments_monthly_gbp": 600.0,
+          "overdraft_usage_12m": 8,
+          "bounced_payments_12m": 3,
+          "kyc_verified": true,
+          "lookup_timestamp": "2026-11-11T13:24:17.710065+00:00"
+        }
+      },
+      {
+        "stage": "M3.2 Document Provenance & Grounding",
+        "provenance_verified": false,
+        "provenance_message": "PROVENANCE_FAILED: Untrusted document issuer domain: 'MISSING'",
+        "grounding_verified": true,
+        "grounding_ratio": 1.0,
+        "grounding_score": 1.0,
+        "grounding_message": "GROUNDING_VERIFIED: Core banking salary matches claimed net income within 15% tolerance (Ratio: 1.00)"
+      },
+      {
+        "stage": "M3.3 Strict Pydantic Action Gatekeeper",
+        "action_certified": true,
+        "gate_message": "CERTIFIED_ESCALATION"
+      }
+    ],
+    "application_id": "APP-871310",
+    "stored_at": "2026-11-11T13:24:17.711061+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 400000.0,
+    "property_valuation_gbp": 500000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 400000.0,
+      "property_valuation_gbp": 500000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 20.0,
+      "loan_to_income_ratio": 5.71,
+      "lti_cap": 4.5,
+      "lti_passed": false,
+      "loan_to_value_pct": 80.0,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 2223.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2955.96,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": -285.96,
+      "stress_test_passed": false,
+      "overall_affordability_passed": false,
+      "max_recommended_loan_gbp": 315000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 400000.0,
+      "evaluated_at": "2026-11-11T13:24:17.724019+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Mortgage Underwriter",
+      "escalation_reasons": [
+        "Affordability stress test failed at requested loan of \u00a3400,000.00."
+      ],
+      "action_required": "Underwriter review of alternative term lengths or reduced borrowing amount."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-841491",
+    "stored_at": "2026-11-11T13:24:17.724019+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 20000.0,
+      "deposit_pct": 6.67,
+      "loan_to_income_ratio": 4.0,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 93.33,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": false,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": false,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "evaluated_at": "2026-11-11T13:24:17.737188+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Mortgage Underwriter",
+      "escalation_reasons": [
+        "Affordability stress test failed at requested loan of \u00a3280,000.00."
+      ],
+      "action_required": "Underwriter review of alternative term lengths or reduced borrowing amount."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-317168",
+    "stored_at": "2026-11-11T13:24:17.738192+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 200000.0,
+    "property_valuation_gbp": 300000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "job_title": "Lead Software Architect",
+      "employment_length_years": 4.5,
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "bank_statements_cross_verified": true,
+      "issuer_domain": null,
+      "provenance_hash": null,
+      "notes": "Verified 3 consecutive months payslips match Lloyds current account salary credits exactly.",
+      "verification_status": "VERIFIED"
+    },
+    "lloyds_account_summary": {
+      "tier": "Club Lloyds",
+      "savings_balance": 42000.0,
+      "tenure_years": 7
+    },
+    "cra_credit_bureau": {
+      "bureau_ref": "EXP-2026-889104",
+      "score": 825,
+      "score_band": "Excellent",
+      "risk_category": "Standard - Low Risk"
+    },
+    "affordability_assessment": {
+      "requested_loan_amount_gbp": 200000.0,
+      "property_valuation_gbp": 300000.0,
+      "deposit_amount_gbp": 100000.0,
+      "deposit_pct": 33.33,
+      "loan_to_income_ratio": 2.86,
+      "lti_cap": 4.5,
+      "lti_passed": true,
+      "loan_to_value_pct": 66.67,
+      "ltv_cap_pct": 85.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1111.66,
+      "stressed_monthly_payment_7_5pct_gbp": 1477.98,
+      "monthly_debt_commitments_gbp": 220.0,
+      "surplus_under_stress_gbp": 1192.02,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 255000.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 200000.0,
+      "evaluated_at": "2026-11-11T13:24:17.752934+00:00",
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Specialist Underwriter",
+      "escalation_reasons": [
+        "Applicant profile classified as non-standard (e.g. self-employed/contractor/complex income)."
+      ],
+      "action_required": "Verify 2 years SA302 / tax calculations."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-118033",
+    "stored_at": "2026-11-11T13:24:17.752934+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "John Smith",
+    "national_insurance_number": "QQ123456C",
+    "account_number": "12345678",
+    "requested_loan_amount_gbp": 280000.0,
+    "property_valuation_gbp": 350000.0,
+    "verified_employment": {
+      "employer_name": "FinTech Systems UK Ltd",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 70000.0,
+      "net_monthly_pay_gbp": 4200.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "issuer_domain": "payroll.fintechsystems.co.uk",
+      "provenance_hash": "aa4d80fbecf0e41bf486b36812599d77b1a703d2f51654ae582199eae718f136",
+      "notes": "Verified 3 months payslips match Lloyds account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "John Smith",
+      "national_insurance_number": "QQ123456C",
+      "credit_score": 825,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 2,
+      "credit_utilization_pct": 12.5,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 4,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-889104",
+      "queried_name": "John Smith",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 280000.0,
+      "property_valuation_gbp": 350000.0,
+      "deposit_amount_gbp": 70000.0,
+      "loan_to_income_ratio": 4.0,
+      "lti_passed": true,
+      "loan_to_value_pct": 80.0,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 1556.33,
+      "stressed_monthly_payment_7_5pct_gbp": 2069.18,
+      "surplus_under_stress_gbp": 600.82,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 297500.0
+    },
+    "decision": {
+      "applicant_name": "John Smith",
+      "requested_loan_amount_gbp": 280000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "AUTO_ISSUED_DIP",
+      "dip_status": "ACCEPTED",
+      "dip_reference": "DIP-LLOYDS-0690070",
+      "approved_loan_amount_gbp": 280000.0,
+      "indicative_interest_rate_pct": 4.45,
+      "certificate_valid_until": "2027-02-09",
+      "governance_signoff": "Keystone Algorithmic Decisioning Engine - FCA MCOB Compliant"
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-500505",
+    "stored_at": "2026-11-11T16:13:39.807067+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
+  },
+  {
+    "applicant_name": "Sarah Jenkins",
+    "national_insurance_number": "AB987654D",
+    "account_number": "87654321",
+    "requested_loan_amount_gbp": 650000.0,
+    "property_valuation_gbp": 850000.0,
+    "verified_employment": {
+      "employer_name": "BioHealth Global PLC",
+      "employment_type": "Permanent Full-Time",
+      "gross_annual_income_gbp": 160000.0,
+      "net_monthly_pay_gbp": 9500.0,
+      "tax_code": "1257L",
+      "payslips_verified": true,
+      "issuer_domain": "payroll.biohealth.com",
+      "provenance_hash": "fee7ca2b4612e22541a90b98605cc64861fa27e1c80fda69b811b07a46725915",
+      "notes": "Verified executive remuneration matches account credits.",
+      "verification_status": "VERIFIED"
+    },
+    "cra_credit_bureau": {
+      "applicant_name": "Sarah Jenkins",
+      "national_insurance_number": "AB987654D",
+      "credit_score": 860,
+      "score_band": "Excellent",
+      "score_range": "0-999",
+      "active_credit_accounts": 3,
+      "credit_utilization_pct": 14.0,
+      "ccj_count": 0,
+      "defaults_count": 0,
+      "bankruptcies": 0,
+      "electoral_roll_registered": true,
+      "electoral_roll_years": 6,
+      "delinquencies_24m": 0,
+      "risk_category": "Standard - Low Risk",
+      "bureau_reference": "EXP-2026-992134",
+      "queried_name": "Sarah Jenkins",
+      "status": "SUCCESS"
+    },
+    "affordability": {
+      "requested_loan_amount_gbp": 650000.0,
+      "property_valuation_gbp": 850000.0,
+      "deposit_amount_gbp": 200000.0,
+      "loan_to_income_ratio": 4.06,
+      "lti_passed": true,
+      "loan_to_value_pct": 76.47,
+      "ltv_passed": true,
+      "estimated_monthly_payment_standard_gbp": 3612.91,
+      "stressed_monthly_payment_7_5pct_gbp": 4803.44,
+      "surplus_under_stress_gbp": 2766.56,
+      "stress_test_passed": true,
+      "overall_affordability_passed": true,
+      "max_recommended_loan_gbp": 720000.0
+    },
+    "decision": {
+      "applicant_name": "Sarah Jenkins",
+      "requested_loan_amount_gbp": 650000.0,
+      "auto_approval_threshold_gbp": 500000.0,
+      "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
+      "dip_status": "REFERRED",
+      "escalation_tier": "Senior Mortgage Mandate Underwriter",
+      "escalation_reasons": [
+        "Requested loan \u00a3650,000.00 exceeds AI automated limit of \u00a3500,000.00."
+      ],
+      "action_required": "Mandate sign-off required for high-exposure loans exceeding \u00a3500,000."
+    },
+    "m3_security_certifications": [
+      "DIRECT_INJECTION_CLEAN",
+      "PROVENANCE_CERTIFIED",
+      "RETRIEVAL_GROUNDED",
+      "PYDANTIC_ACTION_VALIDATED"
+    ],
+    "application_id": "APP-147073",
+    "stored_at": "2026-11-11T16:13:39.923717+00:00",
+    "compliance_certifications": [
+      "GDPR",
+      "FCA_MCOB",
+      "AI_GOVERNANCE_AUDITED"
+    ]
   }
 ]

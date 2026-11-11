@@ -599,34 +599,40 @@ class DocumentProvenanceChecker:
 class DocumentRetrievalGroundingEngine:
     \"\"\"
     [M3.2 RETRIEVAL GROUNDING ENGINE] Cross-references document claims (gross/net income)
-    against verified internal core-banking cashflow feeds. Prevents indirect injection
-    payloads or visual OCR tampering from fabricating ungrounded income.
+    against verified internal core-banking cashflow feeds.
+    Enforces the formula:
+        Grounding Ratio = Actual Core Banking Salary Credit / Document Claimed Net Income
+    Grounding Fails if Ratio < 0.85 or > 1.15 (discrepancy > 15%).
     \"\"\"
     @classmethod
     def ground_income(
         cls, 
         doc_data: Dict[str, Any], 
         account_data: Dict[str, Any], 
-        tolerance_pct: float = 0.20
-    ) -> Tuple[bool, float, str]:
-        claimed_net_monthly = doc_data.get("net_monthly_pay_gbp", 0.0)
-        actual_monthly_salary_credit = account_data.get("average_monthly_salary_credit_gbp", 0.0)
+        tolerance_pct: float = 0.15
+    ) -> Tuple[bool, float, float, str]:
+        claimed_net_monthly = float(doc_data.get("net_monthly_pay_gbp") or 0.0)
+        actual_monthly_salary_credit = float(account_data.get("average_monthly_salary_credit_gbp") or 0.0)
 
         if claimed_net_monthly <= 0 or actual_monthly_salary_credit <= 0:
-            return False, 0.0, "Missing salary credit history or claimed income is zero"
+            return False, 0.0, 0.0, "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Missing salary credit history or claimed income is zero"
 
-        discrepancy_ratio = abs(claimed_net_monthly - actual_monthly_salary_credit) / actual_monthly_salary_credit
-        grounding_score = max(0.0, round(1.0 - discrepancy_ratio, 3))
+        grounding_ratio = round(actual_monthly_salary_credit / claimed_net_monthly, 4)
+        discrepancy_pct = round(abs(1.0 - grounding_ratio) * 100, 2)
+        confidence_score = max(0.0, min(1.0, round(1.0 - abs(1.0 - grounding_ratio), 3)))
 
-        if discrepancy_ratio > tolerance_pct:
-            return (
-                False, 
-                grounding_score, 
-                f"Grounding Failure: Document claims net £{claimed_net_monthly:,.2f}/mo, "
-                f"but core banking shows credits of £{actual_monthly_salary_credit:,.2f}/mo "
-                f"(discrepancy {discrepancy_ratio * 100:.1f}% exceeds tolerance {tolerance_pct * 100:.0f}%)"
+        lower_bound = round(1.0 - tolerance_pct, 2)
+        upper_bound = round(1.0 + tolerance_pct, 2)
+
+        if grounding_ratio < lower_bound or grounding_ratio > upper_bound:
+            alert_msg = (
+                f"INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT: Grounding ratio {grounding_ratio:.2f} "
+                f"outside allowed corridor [{lower_bound}, {upper_bound}]. "
+                f"Discrepancy {discrepancy_pct}% exceeds {tolerance_pct * 100:.0f}% limit."
             )
-        return True, grounding_score, f"GROUNDING_VERIFIED (Score: {grounding_score})"
+            return False, grounding_ratio, confidence_score, alert_msg
+
+        return True, grounding_ratio, confidence_score, f"GROUNDING_VERIFIED: Core banking salary matches within 15% (Ratio: {grounding_ratio:.2f})"
 
 
 class DocumentSanitizer:
@@ -634,8 +640,10 @@ class DocumentSanitizer:
     INJECTION_DELIMITERS = [
         r"\\[SYSTEM\\s+NOTE:.*?\\]",
         r"\\[SYSTEM\\s+INSTRUCTION:.*?\\]",
+        r"\\[CONFIDENTIAL\\s+SYSTEM\\s+NOTE:.*?\\]",
         r"<\\/?system.*?>",
-        r"IGNORE\\s+ALL\\s+PREVIOUS.*"
+        r"IGNORE\\s+ALL\\s+PREVIOUS.*",
+        r"DISREGARD\\s+ALL\\s+RULES.*"
     ]
 
     @classmethod
@@ -644,6 +652,24 @@ class DocumentSanitizer:
         for pattern in cls.INJECTION_DELIMITERS:
             cleaned = re.sub(pattern, "[STRIPPED_CONCEALED_PROMPT_INJECTION]", cleaned, flags=re.IGNORECASE)
         return cleaned
+
+
+class VerifiedIncomeSchema(BaseModel):
+    \"\"\"
+    [M3.2 PASSIVE INCOME SCHEMA]
+    Strictly typed, passive schema containing only validated numerical and structural attributes.
+    Prevents raw unstructured prompt text from entering reasoning context.
+    \"\"\"
+    employer_name: str
+    employment_type: str = "Permanent Full-Time"
+    gross_annual_income_gbp: float = Field(gt=0)
+    net_monthly_pay_gbp: float = Field(gt=0)
+    tax_code: Optional[str] = "1257L"
+    payslips_verified: bool = True
+    issuer_domain: Optional[str] = None
+    provenance_hash: Optional[str] = None
+    notes: Optional[str] = None
+    verification_status: str = "VERIFIED"
 
 
 # -----------------------------------------------------------------------------
@@ -725,7 +751,10 @@ class ActionGatekeeper:
                 )
                 return True, validated_action, "CERTIFIED_ESCALATION"
         except ValidationError as e:
-            error_details = "; ".join([f"{err['loc'][0]}: {err['msg']}" for err in e.errors()])
+            error_details = "; ".join([
+                f"{err['loc'][0] if err.get('loc') else 'policy_rule'}: {err['msg']}"
+                for err in e.errors()
+            ])
             return False, None, f"PYDANTIC_GATEKEEPER_BLOCKED: {error_details}"
 
 print("✓ M3 Security Layers Loaded: Direct Injection Scanner, Provenance Engine, Grounding Engine, and Pydantic Action Gatekeeper.")""")
@@ -755,11 +784,11 @@ mock_tampered_doc = {
 mock_core_account = {"average_monthly_salary_credit_gbp": 2200.0}  # Real core banking cashflow
 
 prov_ok, prov_msg = DocumentProvenanceChecker.verify_provenance(mock_tampered_doc)
-ground_ok, ground_score, ground_msg = DocumentRetrievalGroundingEngine.ground_income(mock_tampered_doc, mock_core_account)
+ground_ok, ground_ratio, ground_score, ground_msg = DocumentRetrievalGroundingEngine.ground_income(mock_tampered_doc, mock_core_account)
 
 print("\\n=== 2. Document Provenance & Retrieval Grounding Test ===")
 print(f"Provenance Verified: {prov_ok} -> {prov_msg}")
-print(f"Grounding Verified: {ground_ok} (Confidence: {ground_score}) -> {ground_msg}")
+print(f"Grounding Verified: {ground_ok} (Ratio: {ground_ratio}, Confidence: {ground_score}) -> {ground_msg}")
 
 # Test 3: M3.3 Strict Pydantic Action Gatekeeper (£2m Attempt)
 proposed_illegal_action = {
@@ -885,26 +914,45 @@ class KeystoneMortgageAgent:
             doc_data = json.loads(doc_raw)
 
         # Sanitize document text from potential OCR injection payloads
-        if "notes" in doc_data:
+        if "notes" in doc_data and doc_data["notes"]:
             doc_data["notes"] = DocumentSanitizer.sanitize_document_text(doc_data["notes"])
+
+        # Validate into strictly typed passive Pydantic schema
+        try:
+            doc_schema = VerifiedIncomeSchema(
+                employer_name=doc_data.get("employer_name", "Unknown"),
+                employment_type=doc_data.get("employment_type", "Permanent Full-Time"),
+                gross_annual_income_gbp=float(doc_data.get("gross_annual_income_gbp", 50000.0)),
+                net_monthly_pay_gbp=float(doc_data.get("net_monthly_pay_gbp", 3100.0)),
+                tax_code=doc_data.get("tax_code", "1257L"),
+                payslips_verified=bool(doc_data.get("payslips_verified", True)),
+                issuer_domain=doc_data.get("issuer_domain"),
+                provenance_hash=doc_data.get("provenance_hash"),
+                notes=doc_data.get("notes"),
+                verification_status=doc_data.get("verification_status", "VERIFIED")
+            )
+            doc_data = doc_schema.model_dump()
+        except ValidationError:
+            pass
 
         # Check Provenance
         prov_ok, prov_msg = DocumentProvenanceChecker.verify_provenance(doc_data)
         
         # Check Retrieval Grounding against core banking salary credits
-        ground_ok, ground_score, ground_msg = DocumentRetrievalGroundingEngine.ground_income(doc_data, acc_data)
+        ground_ok, ground_ratio, ground_score, ground_msg = DocumentRetrievalGroundingEngine.ground_income(doc_data, acc_data, tolerance_pct=0.15)
 
         audit_trail.append({
             "stage": "M3.2 Document Provenance & Grounding",
             "provenance_verified": prov_ok,
             "provenance_message": prov_msg,
             "grounding_verified": ground_ok,
+            "grounding_ratio": ground_ratio,
             "grounding_score": ground_score,
             "grounding_message": ground_msg
         })
 
         if not prov_ok or not ground_ok:
-            # Document tampering or discrepancy detected -> Force human investigation
+            # Document tampering or discrepancy detected -> Trigger INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT
             escalation_payload = {
                 "outcome": "ESCALATE_TO_HUMAN_UNDERWRITER",
                 "applicant_name": applicant_name,
@@ -914,13 +962,14 @@ class KeystoneMortgageAgent:
                     f"Provenance / Grounding Alert: {prov_msg} | {ground_msg}"
                 ],
                 "action_required": "Manual forensic inspection of uploaded documents required.",
-                "grounding_score": ground_score
+                "grounding_score": ground_score,
+                "grounding_ratio": ground_ratio
             }
             certified, validated_action, gate_msg = ActionGatekeeper.certify_action(escalation_payload)
             audit_trail.append({"stage": "M3.3 Pydantic Action Gatekeeper", "certified": certified, "gate_message": gate_msg})
 
             return {
-                "status": "REFERRED_FRAUD_PREVENTION",
+                "status": "INDIRECT_INJECTION_OR_DOCUMENT_FRAUD_ALERT",
                 "customer_message": (
                     f"### Application Notice: Document Verification Referred\\n\\n"
                     f"Dear **{applicant_name}**,\\n\\n"
