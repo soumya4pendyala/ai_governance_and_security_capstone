@@ -1,6 +1,9 @@
 # ai_governance_and_security_capstone
 AI Governance and Security Final Project
 
+See [EXECUTIONS_AND_OUTPUTS.md](./EXECUTIONS_AND_OUTPUTS.md) for feature-level
+inputs and locally captured outputs using the project's synthetic demo data.
+
 ## Local governance demo UI
 
 Start the loopback-only demo UI from the repository root:
